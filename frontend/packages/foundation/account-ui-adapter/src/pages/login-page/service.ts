@@ -28,15 +28,18 @@ import {
 export const useLoginService = ({
   email,
   password,
+  token,
 }: {
-  email: string;
-  password: string;
+  email?: string;
+  password?: string;
+  token?: string;
 }) => {
   const loginService = useRequest(
     async () => {
       const res = (await passport.PassportWebEmailLoginPost({
-        email,
-        password,
+        email: email || '',
+        password: password || '',
+        token,
       })) as unknown as { data: UserInfo };
       return res.data;
     },
@@ -49,8 +52,8 @@ export const useLoginService = ({
   const registerService = useRequest(
     async () => {
       const res = (await passport.PassportWebEmailRegisterV2Post({
-        email,
-        password,
+        email: email || '',
+        password: password || '',
       })) as unknown as { data: UserInfo };
       return res.data;
     },

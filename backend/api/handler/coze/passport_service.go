@@ -19,10 +19,13 @@
 package coze
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"io"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol"
@@ -85,6 +88,53 @@ func PassportWebLogoutGet(ctx context.Context, c *app.RequestContext) {
 	c.JSON(http.StatusOK, resp)
 }
 
+// TokenCheckResponse represents the response from the token check API
+type TokenCheckResponse struct {
+	Username    string   `json:"username"`
+	Authorities []string `json:"authorities"`
+	Email       string   `json:"email"`
+	FirstName   string   `json:"firstName"`
+	LastName    string   `json:"lastName"`
+	DisplayName string   `json:"displayName"`
+}
+
+// checkTokenFromLCMP calls the external API to verify the token and get user info
+func checkTokenFromLCMP(ctx context.Context, token string) (*TokenCheckResponse, error) {
+	reqBody, err := json.Marshal(map[string]string{"token": token})
+	if err != nil {
+		return nil, err
+	}
+
+	client := &http.Client{Timeout: 10 * time.Second}
+	httpReq, err := http.NewRequestWithContext(ctx, "POST", "https://lcmp-sit.lenovo.com/auth/check-token", bytes.NewBuffer(reqBody))
+	if err != nil {
+		return nil, err
+	}
+	httpReq.Header.Set("Content-Type", "application/json")
+
+	httpResp, err := client.Do(httpReq)
+	if err != nil {
+		return nil, err
+	}
+	defer httpResp.Body.Close()
+
+	if httpResp.StatusCode != http.StatusOK {
+		return nil, nil
+	}
+
+	body, err := io.ReadAll(httpResp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var tokenResp TokenCheckResponse
+	if err := json.Unmarshal(body, &tokenResp); err != nil {
+		return nil, err
+	}
+
+	return &tokenResp, nil
+}
+
 // PassportWebEmailLoginPost .
 // @router /passport/web/email/login/ [POST]
 func PassportWebEmailLoginPost(ctx context.Context, c *app.RequestContext) {
@@ -93,6 +143,28 @@ func PassportWebEmailLoginPost(ctx context.Context, c *app.RequestContext) {
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	// Token is required for login
+	if req.GetToken() == "" {
+		c.String(http.StatusBadRequest, "token is required")
+		return
+	}
+
+	// Verify token and get user email from LCMP
+	tokenResp, err := checkTokenFromLCMP(ctx, req.GetToken())
+	if err != nil {
+		logs.CtxErrorf(ctx, "[PassportWebEmailLoginPost] check token failed: %v", err)
+		internalServerErrorResponse(ctx, c, err)
+		return
+	}
+	if tokenResp != nil && tokenResp.Email != "" {
+		req.Email = tokenResp.Email
+		logs.Infof("[PassportWebEmailLoginPost] token verified, email: %s", req.Email)
+	} else {
+		logs.CtxWarnf(ctx, "[PassportWebEmailLoginPost] token verification failed or email is empty")
+		c.String(http.StatusUnauthorized, "Invalid token or email not found")
 		return
 	}
 

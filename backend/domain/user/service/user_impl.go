@@ -70,17 +70,38 @@ func (u *userImpl) Login(ctx context.Context, email, password string) (user *use
 		return nil, err
 	}
 
+	// If user does not exist, create a new user with random password
 	if !exist {
-		return nil, errorx.New(errno.ErrUserInfoInvalidateCode)
-	}
+		randomPassword, err := generateRandomPassword(16)
+		if err != nil {
+			return nil, fmt.Errorf("failed to generate random password: %w", err)
+		}
 
-	// Verify the password using the Argon2id algorithm
-	valid, err := verifyPassword(password, userModel.Password)
-	if err != nil {
-		return nil, err
-	}
-	if !valid {
-		return nil, errorx.New(errno.ErrUserInfoInvalidateCode)
+		_, err = u.Create(ctx, &CreateUserRequest{
+			Email:    email,
+			Password: randomPassword,
+		})
+		if err != nil {
+			return nil, fmt.Errorf("failed to create user: %w", err)
+		}
+
+		// Re-fetch the newly created user
+		userModel, exist, err = u.UserRepo.GetUsersByEmail(ctx, email)
+		if err != nil {
+			return nil, err
+		}
+		if !exist {
+			return nil, errorx.New(errno.ErrUserInfoInvalidateCode)
+		}
+	} else if password != "" {
+		// Verify the password using the Argon2id algorithm only if password is provided
+		valid, err := verifyPassword(password, userModel.Password)
+		if err != nil {
+			return nil, err
+		}
+		if !valid {
+			return nil, errorx.New(errno.ErrUserInfoInvalidateCode)
+		}
 	}
 
 	uniqueSessionID, err := u.IDGen.GenID(ctx)
@@ -495,6 +516,19 @@ var defaultArgon2Params = &argon2Params{
 	parallelism: 4,
 	saltLength:  16,
 	keyLength:   32,
+}
+
+// generateRandomPassword generates a random password of the specified length
+func generateRandomPassword(length int) (string, error) {
+	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*"
+	b := make([]byte, length)
+	if _, err := rand.Read(b); err != nil {
+		return "", err
+	}
+	for i := range b {
+		b[i] = charset[int(b[i])%len(charset)]
+	}
+	return string(b), nil
 }
 
 // Hashing passwords using the Argon2id algorithm

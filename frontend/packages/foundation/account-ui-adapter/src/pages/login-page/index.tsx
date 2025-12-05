@@ -14,28 +14,60 @@
  * limitations under the License.
  */
 
-import { type FC, useState } from 'react';
+import { type FC, useEffect, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 import { CozeBrand } from '@coze-studio/components/coze-brand';
 import { I18n } from '@coze-arch/i18n';
-import { Button, Form } from '@coze-arch/coze-design';
+import { Button } from '@coze-arch/coze-design';
 import { SignFrame, SignPanel } from '@coze-arch/bot-semi';
 
 import { useLoginService } from './service';
 import { Favicon } from './favicon';
 
 export const LoginPage: FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [hasError, setHasError] = useState(false);
+  const [searchParams] = useSearchParams();
+  const token = useMemo(() => searchParams.get('token'), [searchParams]);
 
-  const { login, register, loginLoading, registerLoading } = useLoginService({
-    email,
-    password,
+  const { login, loginLoading } = useLoginService({
+    token: token || undefined,
   });
 
-  const submitDisabled = !email || !password || hasError;
+  // 如果 URL 中有 token 参数，自动调用登录
+  useEffect(() => {
+    if (token) {
+      login();
+    }
+  }, [token, login]);
 
+  const handleLogin = () => {
+    window.location.href = 'https://lcmp-sit.lenovo.com/auth/login-coze?return_url=http://172.17.240.1:8080/sign';
+  };
+
+  // 如果有 token，显示加载状态
+  if (token) {
+    return (
+      <SignFrame brandNode={<CozeBrand isOversea={IS_OVERSEA} />}>
+        <SignPanel className="w-[600px] h-[640px] pt-[96px]">
+          <div className="flex flex-col items-center w-full h-full">
+            <Favicon />
+            <div className="text-[24px] font-medium coze-fg-plug leading-[36px] mt-[32px]">
+              {I18n.t('open_source_login_welcome')}
+            </div>
+            <div className="mt-[64px] w-[320px] flex flex-col items-stretch justify-center text-center">
+              {loginLoading ? (
+                <div>{I18n.t('login_button_text')}...</div>
+              ) : (
+                <div>登录中...</div>
+              )}
+            </div>
+          </div>
+        </SignPanel>
+      </SignFrame>
+    );
+  }
+
+  // 没有 token，显示登录按钮
   return (
     <SignFrame brandNode={<CozeBrand isOversea={IS_OVERSEA} />}>
       <SignPanel className="w-[600px] h-[640px] pt-[96px]">
@@ -44,77 +76,14 @@ export const LoginPage: FC = () => {
           <div className="text-[24px] font-medium coze-fg-plug leading-[36px] mt-[32px]">
             {I18n.t('open_source_login_welcome')}
           </div>
-          <div className="mt-[64px] w-[320px] flex flex-col items-stretch [&_.semi-input-wrapper]:overflow-hidden">
-            <Form
-              onErrorChange={errors => {
-                setHasError(Object.keys(errors).length > 0);
-              }}
-            >
-              <Form.Input
-                data-testid="login.input.email"
-                noLabel
-                type="email"
-                field="email"
-                rules={[
-                  {
-                    required: true,
-                    message: I18n.t('open_source_login_placeholder_email'),
-                  },
-                  {
-                    pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                    message: I18n.t('open_source_login_placeholder_email'),
-                  },
-                ]}
-                onChange={newVal => {
-                  setEmail(newVal);
-                }}
-                placeholder={I18n.t('open_source_login_placeholder_email')}
-              />
-              <Form.Input
-                data-testid="login.input.password"
-                noLabel
-                rules={[
-                  {
-                    required: true,
-                    message: I18n.t('open_source_login_placeholder_password'),
-                  },
-                ]}
-                field="password"
-                type="password"
-                onChange={setPassword}
-                placeholder={I18n.t('open_source_login_placeholder_password')}
-              />
-            </Form>
+          <div className="mt-[64px] w-[320px] flex flex-col items-stretch">
             <Button
               data-testid="login.button.login"
-              className="mt-[12px]"
-              disabled={submitDisabled || registerLoading}
-              onClick={login}
-              loading={loginLoading}
+              onClick={handleLogin}
               color="hgltplus"
             >
               {I18n.t('login_button_text')}
             </Button>
-            <Button
-              data-testid="login.button.signup"
-              className="mt-[20px]"
-              disabled={submitDisabled || loginLoading}
-              onClick={register}
-              loading={registerLoading}
-              color="primary"
-            >
-              {I18n.t('register')}
-            </Button>
-            <div className="mt-[12px] flex justify-center">
-              <a
-                data-testid="login.link.terms"
-                href="https://github.com/coze-dev/coze-studio?tab=Apache-2.0-1-ov-file"
-                target="_blank"
-                className="no-underline coz-fg-hglt"
-              >
-                {I18n.t('open_source_terms_linkname')}
-              </a>
-            </div>
           </div>
         </div>
       </SignPanel>

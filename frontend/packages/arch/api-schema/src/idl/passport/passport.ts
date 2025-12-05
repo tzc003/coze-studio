@@ -50,6 +50,7 @@ export interface PassportWebLogoutGetResponse {
 export interface PassportWebEmailLoginPostRequest {
   email: string,
   password: string,
+  token?: string,
 }
 export interface PassportWebEmailLoginPostResponse {
   data: User,
@@ -123,7 +124,7 @@ export const PassportWebEmailLoginPost = /*#__PURE__*/createAPI<PassportWebEmail
   "name": "PassportWebEmailLoginPost",
   "reqType": "PassportWebEmailLoginPostRequest",
   "reqMapping": {
-    "body": ["email", "password"]
+    "body": ["email", "password", "token"]
   },
   "resType": "PassportWebEmailLoginPostResponse",
   "schemaRoot": "api://schemas/idl_passport_passport",
