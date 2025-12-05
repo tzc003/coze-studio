@@ -33,9 +33,9 @@ echo -e "正在检查 Rush 是否已安装..."
 if ! command -v rush &> /dev/null; then
     echo -e "${YELLOW}未检测到 Rush，正在为您安装...${NC}"
     npm i -g @microsoft/rush
-else
-    RUSH_VERSION=$(rush version)
-    echo -e "${GREEN}Rush 已安装: ${RUSH_VERSION}${NC}"
+#else
+#    RUSH_VERSION=$(rush version)
+#    echo -e "${GREEN}Rush 已安装: ${RUSH_VERSION}${NC}"
 fi
 
 echo -e "${GREEN}环境检查完成！${NC}"
