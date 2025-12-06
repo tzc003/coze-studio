@@ -1,6 +1,6 @@
 module github.com/coze-dev/coze-studio/backend
 
-go 1.24.0
+go 1.24.6
 
 replace github.com/apache/thrift => github.com/apache/thrift v0.13.0
 
@@ -44,8 +44,8 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/matoous/go-nanoid v1.5.1
 	github.com/mattn/go-shellwords v1.0.12
-	github.com/milvus-io/milvus-proto/go-api/v2 v2.5.0-beta.0.20250325034212-6e98baa34971 // indirect
-	github.com/milvus-io/milvus/client/v2 v2.0.0-20250422183838-6b30e9ae6002
+	github.com/milvus-io/milvus-proto/go-api/v2 v2.6.3 // indirect
+	github.com/milvus-io/milvus/client/v2 v2.6.1
 	github.com/minio/minio-go/v7 v7.0.90
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826
 	github.com/nikolalohinski/gonja v1.5.3 // indirect
@@ -59,7 +59,7 @@ require (
 	github.com/shopspring/decimal v1.4.0
 	github.com/smartystreets/goconvey v1.8.1
 	github.com/spf13/cast v1.7.1
-	github.com/stretchr/testify v1.10.0
+	github.com/stretchr/testify v1.11.1
 	github.com/tealeg/xlsx/v3 v3.3.13
 	github.com/tidwall/sjson v1.2.5
 	github.com/volcengine/ve-tos-golang-sdk/v2 v2.7.17
@@ -70,7 +70,7 @@ require (
 	go.uber.org/mock v0.5.1
 	golang.org/x/exp v0.0.0-20250305212735-054e65f0b394
 	golang.org/x/image v0.22.0
-	golang.org/x/mod v0.25.0
+	golang.org/x/mod v0.26.0
 	golang.org/x/oauth2 v0.28.0
 	golang.org/x/sync v0.16.0
 	google.golang.org/genai v1.18.0
@@ -187,14 +187,14 @@ require (
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-sqlite3 v1.14.15 // indirect
 	github.com/meguminnnnnnnnn/go-openai v0.0.0-20250821095446-07791bea23a0 // indirect
-	github.com/milvus-io/milvus/pkg/v2 v2.0.0-20250319085209-5a6b4e56d59e // indirect
+	github.com/milvus-io/milvus/pkg/v2 v2.6.3 // indirect
 	github.com/minio/crc64nvme v1.0.1 // indirect
 	github.com/minio/md5-simd v1.1.2 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/nyaruka/phonenumbers v1.0.55 // indirect
 	github.com/opencontainers/runtime-spec v1.0.2 // indirect
-	github.com/panjf2000/ants/v2 v2.7.2 // indirect
+	github.com/panjf2000/ants/v2 v2.11.3 // indirect
 	github.com/patrickmn/go-cache v2.1.0+incompatible // indirect
 	github.com/pelletier/go-toml/v2 v2.2.3 // indirect
 	github.com/perimeterx/marshmallow v1.1.5 // indirect
@@ -261,12 +261,12 @@ require (
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.27.0 // indirect
 	golang.org/x/arch v0.15.0 // indirect
-	golang.org/x/crypto v0.39.0
-	golang.org/x/net v0.41.0 // indirect
-	golang.org/x/sys v0.33.0 // indirect
-	golang.org/x/text v0.26.0 // indirect
+	golang.org/x/crypto v0.41.0
+	golang.org/x/net v0.43.0 // indirect
+	golang.org/x/sys v0.35.0 // indirect
+	golang.org/x/text v0.28.0 // indirect
 	golang.org/x/time v0.11.0 // indirect
-	golang.org/x/tools v0.33.0 // indirect
+	golang.org/x/tools v0.35.0 // indirect
 	google.golang.org/genproto v0.0.0-20250303144028-a0af3efb3deb // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250303144028-a0af3efb3deb // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250311190419-81fb87f6b8bf // indirect
@@ -303,7 +303,7 @@ require (
 	github.com/fxamacker/cbor/v2 v2.7.0 // indirect
 	github.com/go-jose/go-jose/v4 v4.0.5 // indirect
 	github.com/godbus/dbus v0.0.0-20190726142602-4481cbc300e2 // indirect
-	github.com/golang-jwt/jwt/v5 v5.2.2 // indirect
+	github.com/golang-jwt/jwt/v5 v5.3.0 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect
 	github.com/googleapis/gax-go/v2 v2.14.1 // indirect
@@ -315,7 +315,7 @@ require (
 	github.com/shoenig/go-m1cpu v0.1.6 // indirect
 	github.com/wk8/go-ordered-map/v2 v2.1.8 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.59.0 // indirect
-	golang.org/x/term v0.32.0 // indirect
+	golang.org/x/term v0.34.0 // indirect
 	k8s.io/client-go v0.32.3 // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
 	k8s.io/utils v0.0.0-20250321185631-1f6e0b77f77e // indirect
