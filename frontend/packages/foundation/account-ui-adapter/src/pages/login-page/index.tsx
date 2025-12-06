@@ -41,7 +41,7 @@ export const LoginPage: FC = () => {
   }, [token, login]);
 
   const handleLogin = () => {
-    window.location.href = 'https://lcmp-sit.lenovo.com/auth/login-coze?return_url=http://172.17.240.1:8080/sign';
+    window.location.href = 'https://lcmp-sit.lenovo.com/auth/login-coze?return_url=http://localhost:8888/sign';
   };
 
   // 如果有 token，显示加载状态
